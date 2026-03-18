@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeEngine Pro</title>
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --text: #f1f5f9;
+            --dim: #94a3b8;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #selection-screen {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .mode-card {
+            background: var(--card);
+            flex: 1;
+            padding: 40px 20px;
+            border-radius: 24px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            background: #1e2945;
+        }
+
+        .icon { font-size: 3rem; display: block; margin-bottom: 15px; }
+
+        #app-screen, #chrono-screen {
+            display: none;
+            width: 100%;
+            max-width: 550px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .main-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 32px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .input-group { text-align: left; margin-bottom: 15px; }
+        label { font-size: 0.7rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 5px; letter-spacing: 1px; }
+        
+        input {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-main { width: 100%; background: var(--accent); color: #020617; margin: 10px 0; }
+        .btn-chrono { flex: 1; color: white; margin: 5px; }
+        .btn-start { background: var(--success); }
+        .btn-stop { background: var(--danger); }
+        .btn-lap { background: #475569; }
+        .btn-back { background: none; border: 1px solid #334155; color: var(--dim); margin-top: 20px; }
+
+        .display-area {
+            background: rgba(0,0,0,0.3);
+            padding: 30px 10px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timer-text { font-family: 'JetBrains Mono', monospace; font-size: 2.6rem; font-weight: 800; color: var(--accent); }
+        .ms { font-size: 1.6rem; opacity: 0.6; }
+
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; font-size: 0.75rem; }
+
+        #lap-list { max-height: 140px; overflow-y: auto; margin: 15px 0; padding: 0; list-style: none; text-align: left; }
+        .lap-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
+
+        .finished { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.1) !important; }
+        .finished .timer-text { color: var(--danger); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="selection-screen">
+        <div class="mode-card" onclick="initMode('GEÇEN')"><span class="icon">⏳</span><h3>Geçen Zaman</h3></div>
+        <div class="mode-card" onclick="initMode('KALAN')"><span class="icon">🚀</span><h3>Kalan Zaman</h3></div>
+        <div class="mode-card" onclick="initChrono()"><span class="icon">⏱️</span><h3>Kronometre</h3></div>
+    </div>
+
+    <div id="app-screen">
+        <div class="main-card">
+            <h4 id="header-text" style="margin:0; opacity: 0.6; font-size: 0.8rem; letter-spacing: 2px;">ANALİZ</h4>
+            <div class="input-group" style="margin-top:20px"><label>BAŞLIK</label><input type="text" id="desc"></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="input-group"><label>BAŞLANGIÇ</label><input type="datetime-local" id="t1"></div>
+                <div class="input-group"><label>BİTİŞ</label><input type="datetime-local" id="t2"></div>
+            </div>
+            <button class="btn btn-main" onclick="startAnalysis()">HESAPLA & BAŞLAT</button>
+            <div id="dispObj" class="display-area">
+                <span id="state-label" style="font-size: 0.65rem; font-weight: 800; display: block; margin-bottom: 5px;">BEKLENİYOR</span>
+                <div class="timer-text" id="out">0g 00:00:00<span class="ms">.00</span></div>
+            </div>
+            <div class="stats">
+                <div class="stat-box">HAFTA<br><b id="w">0</b></div>
+                <div class="stat-box">AY<br><b id="m">0</b></div>
+                <div class="stat-box">YIL<br><b id="y">0</b></div>
+            </div>
+            <button class="btn btn-back" onclick="location.reload()">ANAMENÜ</button>
+        </div>
+    </div>
+
+    <div id="chrono-screen">
+        <div class="main-card">
+            <h4 style="margin:0; opacity:0.6; font-size:0.8rem; letter-spacing:2px;">KRONOMETRE</h4>
+            <div class="display-area"><div class="timer-text" id="cDisp">00:00:00<span class="ms">.00</span></div></div>
+            <div style="display: flex;"><button id="cBtn" class="btn btn-chrono btn-start" onclick="toggleChrono()">BAŞLAT</button><button class="btn btn-chrono btn-lap" onclick="lap()">TUR</button><button class="btn btn-chrono btn-stop" onclick="resetChrono()">SIFIRLA</button></div>
+            <ul id="lap-list"></ul>
+            <button class="btn btn-back" onclick="location.reload()">ANAMENÜ</button>
+        </div>
+    </div>
+
+    <script>
+        let itv, cItv, mode = "", cTime = 0, cRun = false;
+        const ac = new (window.AudioContext || window.webkitAudioContext)();
+
+        window.onload = () => {
+            const n = new Date(); n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
+            const iso = n.toISOString().slice(0, 16);
+            document.getElementById('t1').value = iso;
+            document.getElementById('t2').value = iso;
+        };
+
+        const beep = () => {
+            const o = ac.createOscillator(); const g = ac.createGain();
+            o.connect(g); g.connect(ac.destination);
+            o.frequency.value = 880; g.gain.value = 0.1;
+            o.start(); o.stop(ac.currentTime + 0.5);
+        };
+
+        const initMode = (m) => {
+            mode = m;
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+            document.getElementById('header-text').innerText = m + " ANALİZİ";
+        };
+
+        const startAnalysis = () => {
+            if(itv) clearInterval(itv);
+            document.getElementById('dispObj').classList.remove('finished');
+            itv = setInterval(tick, 10);
+            document.getElementById('state-label').innerText = mode === 'GEÇEN' ? 'GEÇEN SÜRE' : 'KALAN SÜRE';
+        };
+
+        const tick = () => {
+            const s = new Date(document.getElementById('t1').value).getTime();
+            const e = new Date(document.getElementById('t2').value).getTime();
+            const n = Date.now();
+            let d = mode === 'GEÇEN' ? n - s : e - n;
+
+            if (mode === 'KALAN' && d <= 0) {
+                clearInterval(itv);
+                document.getElementById('out').innerHTML = `0g 00:00:00<span class="ms">.00</span>`;
+                document.getElementById('dispObj').classList.add('finished');
+                document.getElementById('state-label').innerText = "SÜRE DOLDU";
+                beep(); return;
+            }
+
+            const ad = Math.abs(d), ms = Math.floor((ad % 1000) / 10), sec = Math.floor(ad / 1000), min = Math.floor(sec / 60), hr = Math.floor(min / 60), day = Math.floor(hr / 24);
+            document.getElementById('out').innerHTML = `${day}g ${(hr%24).toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${(sec%60).toString().padStart(2,'0')}<span class="ms">.${ms.toString().padStart(2,'0')}</span>`;
+            document.getElementById('w').innerText = (day/7).toFixed(1);
+            document.getElementById('m').innerText = (day/30.44).toFixed(1);
+            document.getElementById('y').innerText = (day/365.25).toFixed(2);
+        };
+
+        const initChrono = () => {
+            document.getElementById('selection-screen').style.display = 'none';
+            document.getElementById('chrono-screen').style.display = 'block';
+        };
+
+        const toggleChrono = () => {
+            const b = document.getElementById('cBtn');
+            if(!cRun) {
+                cRun = true; b.innerText = "DURDUR"; b.className = "btn btn-chrono btn-stop";
+                const st = Date.now() - cTime;
+                cItv = setInterval(() => {
+                    cTime = Date.now() - st;
+                    const ms = Math.floor((cTime % 1000) / 10), s = Math.floor(cTime / 1000), m = Math.floor(s / 60), h = Math.floor(m / 60);
+                    document.getElementById('cDisp').innerHTML = `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}<span class="ms">.${ms.toString().padStart(2,'0')}</span>`;
+                }, 10);
+            } else {
+                cRun = false; b.innerText = "DEVAM"; b.className = "btn btn-chrono btn-start"; clearInterval(cItv);
+            }
+        };
+
+        const lap = () => {
+            if(cTime === 0) return;
+            const l = document.getElementById('lap-list'), li = document.createElement('li');
+            li.className = 'lap-item'; li.innerHTML = `<span>Tur ${l.children.length + 1}</span> <b>${document.getElementById('cDisp').innerText}</b>`;
+            l.prepend(li);
+        };
+
+        const resetChrono = () => {
+            clearInterval(cItv); cTime = 0; cRun = false;
+            document.getElementById('cDisp').innerHTML = `00:00:00<span class="ms">.00</span>`;
+            document.getElementById('cBtn').innerText = "BAŞLAT"; document.getElementById('cBtn').className = "btn btn-chrono btn-start";
+            document.getElementById('lap-list').innerHTML = "";
+        };
+    </script>
+</body>
+</html>
