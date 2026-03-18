@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimeEngine Pro</title>
+    <title>TimeEngine Pro | Zaman Analiz Merkezi</title>
     <style>
         :root {
             --bg: #020617;
@@ -31,27 +31,38 @@
             display: flex;
             gap: 20px;
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
         }
 
         .mode-card {
             background: var(--card);
             flex: 1;
             padding: 40px 20px;
-            border-radius: 24px;
+            border-radius: 28px;
             text-align: center;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.05);
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .mode-card:hover {
             border-color: var(--accent);
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             background: #1e2945;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
-        .icon { font-size: 3rem; display: block; margin-bottom: 15px; }
+        .mode-card p {
+            color: var(--dim);
+            font-size: 0.85rem;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .icon { font-size: 3.5rem; display: block; margin-bottom: 15px; }
 
         #app-screen, #chrono-screen {
             display: none;
@@ -62,7 +73,7 @@
 
         .main-card {
             background: var(--card);
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 32px;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
@@ -81,6 +92,7 @@
             border-radius: 10px;
             outline: none;
             box-sizing: border-box;
+            font-size: 1rem;
         }
 
         .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
@@ -89,7 +101,7 @@
         .btn-start { background: var(--success); }
         .btn-stop { background: var(--danger); }
         .btn-lap { background: #475569; }
-        .btn-back { background: none; border: 1px solid #334155; color: var(--dim); margin-top: 20px; }
+        .btn-back { background: none; border: 1px solid #334155; color: var(--dim); margin-top: 20px; width: 100%; }
 
         .display-area {
             background: rgba(0,0,0,0.3);
@@ -99,8 +111,8 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .timer-text { font-family: 'JetBrains Mono', monospace; font-size: 2.6rem; font-weight: 800; color: var(--accent); }
-        .ms { font-size: 1.6rem; opacity: 0.6; }
+        .timer-text { font-family: 'JetBrains Mono', monospace; font-size: 2.8rem; font-weight: 800; color: var(--accent); }
+        .ms { font-size: 1.8rem; opacity: 0.6; }
 
         .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; font-size: 0.75rem; }
@@ -117,22 +129,34 @@
 <body>
 
     <div id="selection-screen">
-        <div class="mode-card" onclick="initMode('GEÇEN')"><span class="icon">⏳</span><h3>Geçen Zaman</h3></div>
-        <div class="mode-card" onclick="initMode('KALAN')"><span class="icon">🚀</span><h3>Kalan Zaman</h3></div>
-        <div class="mode-card" onclick="initChrono()"><span class="icon">⏱️</span><h3>Kronometre</h3></div>
+        <div class="mode-card" onclick="initMode('GEÇEN')">
+            <span class="icon">⏳</span>
+            <h3>Geçen Zaman</h3>
+            <p>Seçilen tarihten bugüne kadar geçen süreyi salise hassasiyetiyle takip edin.</p>
+        </div>
+        <div class="mode-card" onclick="initMode('KALAN')">
+            <span class="icon">🚀</span>
+            <h3>Kalan Zaman</h3>
+            <p>Belirlediğiniz hedefe ne kadar süre kaldığını görün ve geri sayımı başlatın.</p>
+        </div>
+        <div class="mode-card" onclick="initChrono()">
+            <span class="icon">⏱️</span>
+            <h3>Kronometre</h3>
+            <p>Tur kayıt özelliği ile hassas zaman ölçümleri gerçekleştirin.</p>
+        </div>
     </div>
 
     <div id="app-screen">
         <div class="main-card">
-            <h4 id="header-text" style="margin:0; opacity: 0.6; font-size: 0.8rem; letter-spacing: 2px;">ANALİZ</h4>
-            <div class="input-group" style="margin-top:20px"><label>BAŞLIK</label><input type="text" id="desc"></div>
+            <h4 id="header-text" style="margin:0; opacity: 0.6; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">ZAMAN ANALİZİ</h4>
+            <div class="input-group" style="margin-top:20px"><label>ETKİNLİK ADI</label><input type="text" id="desc" placeholder="Örn: Proje Başlangıcı"></div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                 <div class="input-group"><label>BAŞLANGIÇ</label><input type="datetime-local" id="t1"></div>
-                <div class="input-group"><label>BİTİŞ</label><input type="datetime-local" id="t2"></div>
+                <div class="input-group"><label>BİTİŞ / HEDEF</label><input type="datetime-local" id="t2"></div>
             </div>
-            <button class="btn btn-main" onclick="startAnalysis()">HESAPLA & BAŞLAT</button>
+            <button class="btn btn-main" onclick="startAnalysis()">HESAPLA VE BAŞLAT</button>
             <div id="dispObj" class="display-area">
-                <span id="state-label" style="font-size: 0.65rem; font-weight: 800; display: block; margin-bottom: 5px;">BEKLENİYOR</span>
+                <span id="state-label" style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 5px; color: var(--accent);">BEKLENİYOR</span>
                 <div class="timer-text" id="out">0g 00:00:00<span class="ms">.00</span></div>
             </div>
             <div class="stats">
@@ -140,17 +164,17 @@
                 <div class="stat-box">AY<br><b id="m">0</b></div>
                 <div class="stat-box">YIL<br><b id="y">0</b></div>
             </div>
-            <button class="btn btn-back" onclick="location.reload()">ANAMENÜ</button>
+            <button class="btn btn-back" onclick="location.reload()">ANA MENÜYE DÖN</button>
         </div>
     </div>
 
     <div id="chrono-screen">
         <div class="main-card">
-            <h4 style="margin:0; opacity:0.6; font-size:0.8rem; letter-spacing:2px;">KRONOMETRE</h4>
+            <h4 style="margin:0; opacity:0.6; font-size:0.75rem; letter-spacing:2px;">PROFESYONEL KRONOMETRE</h4>
             <div class="display-area"><div class="timer-text" id="cDisp">00:00:00<span class="ms">.00</span></div></div>
             <div style="display: flex;"><button id="cBtn" class="btn btn-chrono btn-start" onclick="toggleChrono()">BAŞLAT</button><button class="btn btn-chrono btn-lap" onclick="lap()">TUR</button><button class="btn btn-chrono btn-stop" onclick="resetChrono()">SIFIRLA</button></div>
             <ul id="lap-list"></ul>
-            <button class="btn btn-back" onclick="location.reload()">ANAMENÜ</button>
+            <button class="btn btn-back" onclick="location.reload()">ANA MENÜYE DÖN</button>
         </div>
     </div>
 
@@ -176,7 +200,7 @@
             mode = m;
             document.getElementById('selection-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('header-text').innerText = m + " ANALİZİ";
+            document.getElementById('header-text').innerText = m === 'GEÇEN' ? "GEÇEN ZAMAN ANALİZİ" : "KALAN ZAMAN ANALİZİ";
         };
 
         const startAnalysis = () => {
@@ -223,7 +247,7 @@
                     document.getElementById('cDisp').innerHTML = `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}<span class="ms">.${ms.toString().padStart(2,'0')}</span>`;
                 }, 10);
             } else {
-                cRun = false; b.innerText = "DEVAM"; b.className = "btn btn-chrono btn-start"; clearInterval(cItv);
+                cRun = false; b.innerText = "DEVAM ET"; b.className = "btn btn-chrono btn-start"; clearInterval(cItv);
             }
         };
 
