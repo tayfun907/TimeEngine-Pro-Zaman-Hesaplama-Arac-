@@ -1,269 +1,1360 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TimeEngine Pro | Zaman Analiz Merkezi</title>
-    <style>
-        :root {
-            --bg: #020617;
-            --card: #1e293b;
-            --accent: #38bdf8;
-            --text: #f1f5f9;
-            --dim: #94a3b8;
-            --success: #22c55e;
-            --danger: #ef4444;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
+<title>TimeEngine Pro | Zamanın Kontrolü</title>
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+<style>
+:root {
+    --bg:#080d1b;
+    --panel:#111a2e;
+    --panel2:#17233a;
+    --accent:#38bdf8;
+    --purple:#a78bfa;
+    --green:#22c55e;
+    --red:#fb7185;
+    --text:#f1f5f9;
+    --muted:#94a3b8;
+    --border:rgba(255,255,255,.08);
+}
 
-        #selection-screen {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 950px;
-        }
+*{box-sizing:border-box}
 
-        .mode-card {
-            background: var(--card);
-            flex: 1;
-            padding: 40px 20px;
-            border-radius: 28px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+body{
+    margin:0;
+    min-height:100vh;
+    background:
+    radial-gradient(ellipse at top,#172746 0%,transparent 55%),
+    var(--bg);
+    color:var(--text);
+    font-family:Inter,system-ui,sans-serif;
+}
 
-        .mode-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-8px);
-            background: #1e2945;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        }
+button,input,select{font:inherit}
+button{cursor:pointer}
 
-        .mode-card p {
-            color: var(--dim);
-            font-size: 0.85rem;
-            margin-top: 10px;
-            line-height: 1.4;
-        }
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:30px 20px 60px;
+}
 
-        .icon { font-size: 3.5rem; display: block; margin-bottom: 15px; }
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:35px;
+}
 
-        #app-screen, #chrono-screen {
-            display: none;
-            width: 100%;
-            max-width: 550px;
-            animation: fadeIn 0.3s ease-out;
-        }
+.logo{
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
 
-        .main-card {
-            background: var(--card);
-            padding: 2.5rem;
-            border-radius: 32px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            text-align: center;
-        }
+.logo span{color:var(--accent)}
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        label { font-size: 0.7rem; color: var(--accent); font-weight: 800; display: block; margin-bottom: 5px; letter-spacing: 1px; }
-        
-        input {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            outline: none;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
+.clock{
+    color:var(--muted);
+    font-family:monospace;
+    font-size:16px;
+}
 
-        .btn { border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-main { width: 100%; background: var(--accent); color: #020617; margin: 10px 0; }
-        .btn-chrono { flex: 1; color: white; margin: 5px; }
-        .btn-start { background: var(--success); }
-        .btn-stop { background: var(--danger); }
-        .btn-lap { background: #475569; }
-        .btn-back { background: none; border: 1px solid #334155; color: var(--dim); margin-top: 20px; width: 100%; }
+.hero{text-align:center;margin:35px 0 30px}
 
-        .display-area {
-            background: rgba(0,0,0,0.3);
-            padding: 30px 10px;
-            border-radius: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+.hero h1{
+    font-size:clamp(28px,5vw,43px);
+    margin:0 0 10px;
+    letter-spacing:-1.5px;
+}
 
-        .timer-text { font-family: 'JetBrains Mono', monospace; font-size: 2.8rem; font-weight: 800; color: var(--accent); }
-        .ms { font-size: 1.8rem; opacity: 0.6; }
+.hero p{color:var(--muted);margin:0}
 
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 12px; font-size: 0.75rem; }
+.menu{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:15px;
+    margin:30px 0;
+}
 
-        #lap-list { max-height: 140px; overflow-y: auto; margin: 15px 0; padding: 0; list-style: none; text-align: left; }
-        .lap-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
+.menu-card{
+    background:linear-gradient(145deg,var(--panel2),var(--panel));
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:23px 18px;
+    cursor:pointer;
+    transition:.25s;
+    text-align:left;
+}
 
-        .finished { border-color: var(--danger) !important; background: rgba(239, 68, 68, 0.1) !important; }
-        .finished .timer-text { color: var(--danger); }
+.menu-card:hover{
+    transform:translateY(-5px);
+    border-color:var(--accent);
+    box-shadow:0 12px 35px #0005;
+}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+.menu-card .icon{font-size:30px}
+.menu-card h3{margin:13px 0 6px}
+.menu-card p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+    margin:0;
+}
+
+.panel{
+    display:none;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:30px;
+    animation:appear .3s ease;
+}
+
+.panel.active{display:block}
+
+@keyframes appear{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.panel-header h2{margin:0;font-size:22px}
+
+.back{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:9px 15px;
+    border-radius:10px;
+}
+
+.back:hover{color:white;border-color:var(--accent)}
+
+.field{margin-bottom:17px}
+
+.field label{
+    display:block;
+    color:var(--accent);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1px;
+    margin-bottom:8px;
+}
+
+input,select{
+    width:100%;
+    padding:13px;
+    border-radius:11px;
+    border:1px solid #334155;
+    background:#0b1426;
+    color:white;
+    outline:none;
+}
+
+input:focus,select:focus{border-color:var(--accent)}
+
+.date-button{
+    width:100%;
+    padding:15px;
+    background:#0b1426;
+    border:1px solid #334155;
+    color:white;
+    border-radius:12px;
+    text-align:left;
+}
+
+.date-button:hover{border-color:var(--accent)}
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.btn{
+    border:0;
+    border-radius:12px;
+    padding:14px 20px;
+    font-weight:800;
+    transition:.2s;
+}
+
+.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+
+.primary{background:var(--accent);color:#06111d;width:100%}
+.green{background:var(--green);color:#05210e}
+.red{background:var(--red);color:#30050b}
+.gray{background:#334155;color:white}
+.purple{background:var(--purple);color:#170d35}
+
+.display{
+    margin:25px 0;
+    padding:30px 15px;
+    background:linear-gradient(145deg,#091426,#101f36);
+    border:1px solid var(--border);
+    border-radius:20px;
+    text-align:center;
+}
+
+.state{
+    color:var(--accent);
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:2px;
+    margin-bottom:12px;
+}
+
+.timer{
+    font-family:'Courier New',monospace;
+    font-size:clamp(25px,5.5vw,48px);
+    font-weight:bold;
+    color:var(--accent);
+    letter-spacing:-2px;
+    overflow-wrap:anywhere;
+}
+
+.timer small{font-size:.55em;opacity:.65}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin:20px 0;
+}
+
+.stat{
+    background:var(--panel2);
+    padding:17px 8px;
+    text-align:center;
+    border-radius:13px;
+}
+
+.stat span{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:8px;
+}
+
+.stat b{font-size:19px}
+
+.note{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.6;
+    margin-top:18px;
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+}
+
+.controls .btn{flex:1;min-width:100px}
+
+.laps{
+    margin-top:20px;
+    max-height:250px;
+    overflow:auto;
+}
+
+.lap{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    padding:13px;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+}
+
+.lap span:last-child{text-align:right}
+.lap span:nth-child(2){text-align:center;color:var(--accent)}
+
+.result-box{
+    margin-top:20px;
+    background:var(--panel2);
+    padding:20px;
+    border-radius:15px;
+    line-height:1.9;
+}
+
+.result-box strong{color:var(--accent)}
+
+.saved-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:14px;
+    background:var(--panel2);
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.saved-item small{display:block;color:var(--muted);margin-top:5px}
+
+.saved-actions{display:flex;gap:6px}
+
+.saved-actions button{
+    background:#334155;
+    color:white;
+    border:0;
+    padding:8px;
+    border-radius:8px;
+}
+
+footer{
+    text-align:center;
+    color:#64748b;
+    font-size:12px;
+    margin-top:45px;
+}
+
+/* TAKVİM */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:#000b;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+
+.modal.open{display:flex}
+
+.calendar{
+    width:100%;
+    max-width:390px;
+    background:#142039;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 25px 80px #0009;
+}
+
+.cal-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-bottom:20px;
+}
+
+.cal-top button{
+    background:#253653;
+    border:0;
+    color:white;
+    border-radius:8px;
+    padding:9px 12px;
+}
+
+.cal-selects{
+    display:flex;
+    gap:8px;
+    flex:1;
+}
+
+.cal-selects select{padding:9px;font-size:13px}
+
+.weekdays,.days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+    text-align:center;
+}
+
+.weekdays{
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:10px;
+}
+
+.days button{
+    border:0;
+    background:transparent;
+    color:white;
+    padding:11px 0;
+    border-radius:9px;
+}
+
+.days button:hover{background:#334155}
+.days button.selected{background:var(--accent);color:#071321;font-weight:900}
+.days button.today{border:1px solid var(--accent)}
+.days button.empty{visibility:hidden}
+
+.cal-time{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:20px 0;
+}
+
+.cal-time input{text-align:center}
+
+.quick-dates{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-bottom:18px;
+}
+
+.quick-dates button{
+    border:1px solid var(--border);
+    color:var(--muted);
+    background:#1b2b46;
+    padding:8px 10px;
+    border-radius:8px;
+    font-size:11px;
+}
+
+.quick-dates button:hover{color:white;border-color:var(--accent)}
+
+.cal-actions{display:flex;gap:10px}
+.cal-actions button{flex:1}
+
+@media(max-width:600px){
+    .container{padding:20px 13px 40px}
+    .panel{padding:20px 15px}
+    .grid2{grid-template-columns:1fr}
+    .stats{gap:7px}
+    .stat{padding:13px 4px}
+    .stat b{font-size:16px}
+    .clock{font-size:12px}
+    .hero{margin:25px 0}
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="selection-screen">
-        <div class="mode-card" onclick="initMode('GEÇEN')">
-            <span class="icon">⏳</span>
+<div class="container">
+
+<header>
+    <div class="logo">TIME<span>ENGINE</span> PRO</div>
+    <div class="clock" id="liveClock">00:00:00</div>
+</header>
+
+<div id="home">
+    <div class="hero">
+        <h1>Zamanın Kontrolü Sende.</h1>
+        <p>Hesapla, takip et, ölç ve geçmişi keşfet.</p>
+    </div>
+
+    <div class="menu">
+        <div class="menu-card" onclick="openPanel('elapsed')">
+            <div class="icon">⏳</div>
             <h3>Geçen Zaman</h3>
-            <p>Seçilen tarihten bugüne kadar geçen süreyi salise hassasiyetiyle takip edin.</p>
+            <p>Geçmişten bugüne geçen süreyi takip et.</p>
         </div>
-        <div class="mode-card" onclick="initMode('KALAN')">
-            <span class="icon">🚀</span>
+
+        <div class="menu-card" onclick="openPanel('remaining')">
+            <div class="icon">🚀</div>
             <h3>Kalan Zaman</h3>
-            <p>Belirlediğiniz hedefe ne kadar süre kaldığını görün ve geri sayımı başlatın.</p>
+            <p>Hedefine ne kadar kaldığını gör.</p>
         </div>
-        <div class="mode-card" onclick="initChrono()">
-            <span class="icon">⏱️</span>
+
+        <div class="menu-card" onclick="openPanel('chrono')">
+            <div class="icon">⏱️</div>
             <h3>Kronometre</h3>
-            <p>Tur kayıt özelliği ile hassas zaman ölçümleri gerçekleştirin.</p>
+            <p>Hassas ölçüm ve tur kayıtları.</p>
+        </div>
+
+        <div class="menu-card" onclick="openPanel('difference')">
+            <div class="icon">📅</div>
+            <h3>Tarih Hesaplama</h3>
+            <p>İki tarih arasındaki farkı öğren.</p>
+        </div>
+
+        <div class="menu-card" onclick="openPanel('age')">
+            <div class="icon">🎂</div>
+            <h3>Yaş Hesaplama</h3>
+            <p>Yaşını ve toplam geçen günleri hesapla.</p>
+        </div>
+
+        <div class="menu-card" onclick="openPanel('convert')">
+            <div class="icon">🔄</div>
+            <h3>Zaman Dönüştürücü</h3>
+            <p>Zaman birimleri arasında dönüşüm yap.</p>
+        </div>
+
+        <div class="menu-card" onclick="openPanel('saved')">
+            <div class="icon">💾</div>
+            <h3>Kayıtlı Sayaçlar</h3>
+            <p>Kaydettiğin sayaçlara yeniden ulaş.</p>
         </div>
     </div>
+</div>
 
-    <div id="app-screen">
-        <div class="main-card">
-            <h4 id="header-text" style="margin:0; opacity: 0.6; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">ZAMAN ANALİZİ</h4>
-            <div class="input-group" style="margin-top:20px"><label>ETKİNLİK ADI</label><input type="text" id="desc" placeholder="Örn: Proje Başlangıcı"></div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div class="input-group"><label>BAŞLANGIÇ</label><input type="datetime-local" id="t1"></div>
-                <div class="input-group"><label>BİTİŞ / HEDEF</label><input type="datetime-local" id="t2"></div>
-            </div>
-            <button class="btn btn-main" onclick="startAnalysis()">HESAPLA VE BAŞLAT</button>
-            <div id="dispObj" class="display-area">
-                <span id="state-label" style="font-size: 0.7rem; font-weight: 800; display: block; margin-bottom: 5px; color: var(--accent);">BEKLENİYOR</span>
-                <div class="timer-text" id="out">0g 00:00:00<span class="ms">.00</span></div>
-            </div>
-            <div class="stats">
-                <div class="stat-box">HAFTA<br><b id="w">0</b></div>
-                <div class="stat-box">AY<br><b id="m">0</b></div>
-                <div class="stat-box">YIL<br><b id="y">0</b></div>
-            </div>
-            <button class="btn btn-back" onclick="location.reload()">ANA MENÜYE DÖN</button>
-        </div>
+<!-- GEÇEN ZAMAN -->
+
+<section class="panel" id="elapsed">
+    <div class="panel-header">
+        <h2>⏳ Geçen Zaman</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
     </div>
 
-    <div id="chrono-screen">
-        <div class="main-card">
-            <h4 style="margin:0; opacity:0.6; font-size:0.75rem; letter-spacing:2px;">PROFESYONEL KRONOMETRE</h4>
-            <div class="display-area"><div class="timer-text" id="cDisp">00:00:00<span class="ms">.00</span></div></div>
-            <div style="display: flex;"><button id="cBtn" class="btn btn-chrono btn-start" onclick="toggleChrono()">BAŞLAT</button><button class="btn btn-chrono btn-lap" onclick="lap()">TUR</button><button class="btn btn-chrono btn-stop" onclick="resetChrono()">SIFIRLA</button></div>
-            <ul id="lap-list"></ul>
-            <button class="btn btn-back" onclick="location.reload()">ANA MENÜYE DÖN</button>
-        </div>
+    <div class="field">
+        <label>ETKİNLİK / AÇIKLAMA</label>
+        <input id="elapsedName" placeholder="Örn: Proje başlangıcı">
     </div>
 
-    <script>
-        let itv, cItv, mode = "", cTime = 0, cRun = false;
-        const ac = new (window.AudioContext || window.webkitAudioContext)();
+    <div class="field">
+        <label>BAŞLANGIÇ TARİHİ VE SAATİ</label>
+        <button class="date-button" id="elapsedDateBtn" onclick="showPicker('elapsed')"></button>
+    </div>
 
-        window.onload = () => {
-            const n = new Date(); n.setMinutes(n.getMinutes() - n.getTimezoneOffset());
-            const iso = n.toISOString().slice(0, 16);
-            document.getElementById('t1').value = iso;
-            document.getElementById('t2').value = iso;
+    <button class="btn primary" onclick="startTimer('elapsed')">HESAPLA VE BAŞLAT</button>
+
+    <div class="display">
+        <div class="state" id="elapsedState">BEKLENİYOR</div>
+        <div class="timer" id="elapsedOut">0 gün 00:00:00<small>.00</small></div>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><span>TOPLAM GÜN</span><b id="elapsedDays">0</b></div>
+        <div class="stat"><span>TOPLAM SAAT</span><b id="elapsedHours">0</b></div>
+        <div class="stat"><span>TOPLAM DAKİKA</span><b id="elapsedMinutes">0</b></div>
+        <div class="stat"><span>HAFTA</span><b id="elapsedWeeks">0</b></div>
+        <div class="stat"><span>AY (YAKLAŞIK)</span><b id="elapsedMonths">0</b></div>
+        <div class="stat"><span>YIL (YAKLAŞIK)</span><b id="elapsedYears">0</b></div>
+    </div>
+
+    <button class="btn gray" onclick="saveTimer('elapsed')">💾 Sayacı Kaydet</button>
+</section>
+
+<!-- KALAN ZAMAN -->
+
+<section class="panel" id="remaining">
+    <div class="panel-header">
+        <h2>🚀 Kalan Zaman</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div class="field">
+        <label>HEDEFİN ADI</label>
+        <input id="remainingName" placeholder="Örn: Yeni yıl">
+    </div>
+
+    <div class="field">
+        <label>HEDEF TARİHİ VE SAATİ</label>
+        <button class="date-button" id="remainingDateBtn" onclick="showPicker('remaining')"></button>
+    </div>
+
+    <div class="quick-dates">
+        <button onclick="quickTarget('remaining',1)">Yarın</button>
+        <button onclick="quickTarget('remaining',7)">1 Hafta</button>
+        <button onclick="quickTarget('remaining',30)">1 Ay</button>
+        <button onclick="newYear()">Yeni Yıl</button>
+    </div>
+
+    <button class="btn primary" onclick="startTimer('remaining')">GERİ SAYIMI BAŞLAT</button>
+
+    <div class="display" id="remainingDisplay">
+        <div class="state" id="remainingState">HEDEF BEKLENİYOR</div>
+        <div class="timer" id="remainingOut">0 gün 00:00:00<small>.00</small></div>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><span>KALAN GÜN</span><b id="remainingDays">0</b></div>
+        <div class="stat"><span>KALAN SAAT</span><b id="remainingHours">0</b></div>
+        <div class="stat"><span>KALAN DAKİKA</span><b id="remainingMinutes">0</b></div>
+    </div>
+
+    <button class="btn gray" onclick="saveTimer('remaining')">💾 Sayacı Kaydet</button>
+</section>
+
+<!-- KRONOMETRE -->
+
+<section class="panel" id="chrono">
+    <div class="panel-header">
+        <h2>⏱️ Kronometre</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div class="display">
+        <div class="state">PROFESYONEL KRONOMETRE</div>
+        <div class="timer" id="chronoOut">00:00:00<small>.00</small></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn green" id="chronoStart" onclick="toggleChrono()">BAŞLAT</button>
+        <button class="btn gray" onclick="addLap()">TUR</button>
+        <button class="btn red" onclick="resetChrono()">SIFIRLA</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat"><span>EN HIZLI TUR</span><b id="fastLap">--</b></div>
+        <div class="stat"><span>EN YAVAŞ TUR</span><b id="slowLap">--</b></div>
+        <div class="stat"><span>ORTALAMA TUR</span><b id="avgLap">--</b></div>
+    </div>
+
+    <div class="laps" id="lapList"></div>
+</section>
+
+<!-- TARİH FARKI -->
+
+<section class="panel" id="difference">
+    <div class="panel-header">
+        <h2>📅 Tarih Hesaplama</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div class="field">
+        <label>BAŞLANGIÇ TARİHİ</label>
+        <button class="date-button" id="diff1Btn" onclick="showPicker('diff1')"></button>
+    </div>
+
+    <div class="field">
+        <label>BİTİŞ TARİHİ</label>
+        <button class="date-button" id="diff2Btn" onclick="showPicker('diff2')"></button>
+    </div>
+
+    <button class="btn primary" onclick="calculateDifference()">FARKI HESAPLA</button>
+
+    <div class="result-box" id="diffResult">
+        İki tarih seçerek hesaplamayı başlat.
+    </div>
+</section>
+
+<!-- YAŞ -->
+
+<section class="panel" id="age">
+    <div class="panel-header">
+        <h2>🎂 Yaş Hesaplama</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div class="field">
+        <label>DOĞUM TARİHİ</label>
+        <button class="date-button" id="birthBtn" onclick="showPicker('birth')"></button>
+    </div>
+
+    <button class="btn primary" onclick="calculateAge()">YAŞIMI HESAPLA</button>
+
+    <div class="result-box" id="ageResult">
+        Doğum tarihini seçerek yaşını hesaplayabilirsin.
+    </div>
+</section>
+
+<!-- DÖNÜŞTÜRÜCÜ -->
+
+<section class="panel" id="convert">
+    <div class="panel-header">
+        <h2>🔄 Zaman Dönüştürücü</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div class="field">
+        <label>DEĞER</label>
+        <input type="number" id="convertValue" value="1" min="0" step="any">
+    </div>
+
+    <div class="field">
+        <label>BİRİM</label>
+        <select id="convertUnit">
+            <option value="1">Saniye</option>
+            <option value="60">Dakika</option>
+            <option value="3600">Saat</option>
+            <option value="86400">Gün</option>
+            <option value="604800">Hafta</option>
+            <option value="2592000">30 Günlük Ay</option>
+            <option value="31536000">365 Günlük Yıl</option>
+        </select>
+    </div>
+
+    <button class="btn primary" onclick="convertTime()">DÖNÜŞTÜR</button>
+
+    <div class="result-box" id="convertResult">
+        Sonuç burada gösterilecek.
+    </div>
+</section>
+
+<!-- KAYITLAR -->
+
+<section class="panel" id="saved">
+    <div class="panel-header">
+        <h2>💾 Kayıtlı Sayaçlar</h2>
+        <button class="back" onclick="home()">← Ana Menü</button>
+    </div>
+
+    <div id="savedList"></div>
+</section>
+
+<footer>
+    TIMEENGINE PRO · ZAMANIN HER ANINI KEŞFET
+</footer>
+
+</div>
+
+<!-- ÖZEL TAKVİM -->
+
+<div class="modal" id="calendarModal">
+    <div class="calendar">
+
+        <div class="cal-top">
+            <button onclick="changeMonth(-1)">‹</button>
+            <div class="cal-selects">
+                <select id="calMonth" onchange="renderCalendar()"></select>
+                <select id="calYear" onchange="renderCalendar()"></select>
+            </div>
+            <button onclick="changeMonth(1)">›</button>
+        </div>
+
+        <div class="weekdays">
+            <span>Pzt</span><span>Sal</span><span>Çar</span>
+            <span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+        </div>
+
+        <div class="days" id="calendarDays"></div>
+
+        <div class="cal-time">
+            <span>Saat</span>
+            <input type="number" id="calHour" min="0" max="23" value="12">
+            <span>:</span>
+            <input type="number" id="calMinute" min="0" max="59" value="0">
+        </div>
+
+        <div class="quick-dates">
+            <button onclick="calendarToday()">Bugün</button>
+            <button onclick="calendarOffset(-1)">Dün</button>
+            <button onclick="calendarOffset(-7)">1 Hafta Önce</button>
+            <button onclick="calendarOffset(-30)">1 Ay Önce</button>
+            <button onclick="calendarOffset(-365)">1 Yıl Önce</button>
+            <button onclick="calendarOffset(-3650)">10 Yıl Önce</button>
+        </div>
+
+        <div class="cal-actions">
+            <button class="btn gray" onclick="closePicker()">İPTAL</button>
+            <button class="btn primary" onclick="confirmPicker()">TARİHİ SEÇ</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* GENEL */
+
+const $ = id => document.getElementById(id);
+
+let timers = {};
+let pickerTarget = null;
+let pickerDate = new Date();
+let chronoStartTime = 0;
+let chronoElapsed = 0;
+let chronoRunning = false;
+let chronoInterval = null;
+let laps = [];
+let lastLapTime = 0;
+
+const pad = n => String(n).padStart(2,'0');
+
+function localISO(d){
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function parseDate(s){
+    if(!s) return null;
+    const d = new Date(s);
+    return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function formatDate(d){
+    return d.toLocaleString('tr-TR',{
+        day:'2-digit',month:'long',year:'numeric',
+        hour:'2-digit',minute:'2-digit'
+    });
+}
+
+function updateClock(){
+    $('liveClock').textContent =
+    new Date().toLocaleTimeString('tr-TR');
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function openPanel(id){
+    $('home').style.display='none';
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    $(id).classList.add('active');
+    if(id==='saved') renderSaved();
+}
+
+function home(){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    $('home').style.display='block';
+}
+
+/* TAKVİM */
+
+const months=[
+'Ocak','Şubat','Mart','Nisan','Mayıs','Haziran',
+'Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'
+];
+
+function initCalendar(){
+    months.forEach((m,i)=>{
+        const o=document.createElement('option');
+        o.value=i;o.textContent=m;
+        $('calMonth').appendChild(o);
+    });
+
+    for(let y=1900;y<=2200;y++){
+        const o=document.createElement('option');
+        o.value=y;o.textContent=y;
+        $('calYear').appendChild(o);
+    }
+}
+
+function showPicker(target){
+    pickerTarget=target;
+
+    const buttonMap={
+        elapsed:'elapsedDateBtn',
+        remaining:'remainingDateBtn',
+        diff1:'diff1Btn',
+        diff2:'diff2Btn',
+        birth:'birthBtn'
+    };
+
+    const button=$(buttonMap[target]);
+    pickerDate=parseDate(button.dataset.date) || new Date();
+
+    $('calHour').value=pad(pickerDate.getHours());
+    $('calMinute').value=pad(pickerDate.getMinutes());
+
+    renderCalendar();
+    $('calendarModal').classList.add('open');
+}
+
+function closePicker(){
+    $('calendarModal').classList.remove('open');
+}
+
+function renderCalendar(){
+    const y=Number($('calYear').value);
+    const m=Number($('calMonth').value);
+
+    const first=new Date(y,m,1);
+    const offset=(first.getDay()+6)%7;
+    const total=new Date(y,m+1,0).getDate();
+
+    $('calendarDays').innerHTML='';
+
+    for(let i=0;i<42;i++){
+        const day=i-offset+1;
+        const b=document.createElement('button');
+
+        if(day<1||day>total){
+            b.className='empty';
+            b.textContent='0';
+        }else{
+            b.textContent=day;
+
+            const today=new Date();
+
+            if(
+                day===today.getDate() &&
+                m===today.getMonth() &&
+                y===today.getFullYear()
+            ) b.classList.add('today');
+
+            if(
+                day===pickerDate.getDate() &&
+                m===pickerDate.getMonth() &&
+                y===pickerDate.getFullYear()
+            ) b.classList.add('selected');
+
+            b.onclick=()=>{
+                pickerDate.setFullYear(y,m,day);
+                renderCalendar();
+            };
+        }
+
+        $('calendarDays').appendChild(b);
+    }
+}
+
+function changeMonth(delta){
+    pickerDate.setDate(1);
+    pickerDate.setMonth(pickerDate.getMonth()+delta);
+    $('calMonth').value=pickerDate.getMonth();
+    $('calYear').value=pickerDate.getFullYear();
+    renderCalendar();
+}
+
+function calendarToday(){
+    pickerDate=new Date();
+    $('calMonth').value=pickerDate.getMonth();
+    $('calYear').value=pickerDate.getFullYear();
+    $('calHour').value=pad(pickerDate.getHours());
+    $('calMinute').value=pad(pickerDate.getMinutes());
+    renderCalendar();
+}
+
+function calendarOffset(days){
+    pickerDate=new Date();
+    pickerDate.setDate(pickerDate.getDate()+days);
+    $('calMonth').value=pickerDate.getMonth();
+    $('calYear').value=pickerDate.getFullYear();
+    renderCalendar();
+}
+
+function confirmPicker(){
+    const h=Math.max(0,Math.min(23,Number($('calHour').value)||0));
+    const m=Math.max(0,Math.min(59,Number($('calMinute').value)||0));
+
+    pickerDate.setHours(h,m,0,0);
+
+    const map={
+        elapsed:'elapsedDateBtn',
+        remaining:'remainingDateBtn',
+        diff1:'diff1Btn',
+        diff2:'diff2Btn',
+        birth:'birthBtn'
+    };
+
+    const button=$(map[pickerTarget]);
+    button.dataset.date=localISO(pickerDate);
+    button.textContent='📅 '+formatDate(pickerDate);
+
+    closePicker();
+}
+
+function setDateButton(id,date){
+    $(id).dataset.date=localISO(date);
+    $(id).textContent='📅 '+formatDate(date);
+}
+
+/* ZAMAN SAYACI */
+
+function startTimer(type){
+    const dateId=type==='elapsed'?'elapsedDateBtn':'remainingDateBtn';
+    const target=parseDate($(dateId).dataset.date);
+
+    if(!target){
+        alert('Lütfen geçerli bir tarih seç.');
+        return;
+    }
+
+    if(type==='remaining' && target.getTime()<=Date.now()){
+        alert('Hedef tarihi gelecekte olmalıdır.');
+        return;
+    }
+
+    timers[type]=target.getTime();
+
+    $(type+'State').textContent=
+    type==='elapsed'?'GEÇEN SÜRE':'HEDEFE KALAN SÜRE';
+
+    if(type==='remaining') $('remainingDisplay').classList.remove('finished');
+
+    updateTimer(type);
+}
+
+function updateTimer(type){
+    const target=timers[type];
+    if(!target) return;
+
+    const now=Date.now();
+    let diff=type==='elapsed'?now-target:target-now;
+
+    if(type==='remaining'&&diff<=0){
+        diff=0;
+        $('remainingState').textContent='🎉 HEDEFE ULAŞILDI';
+        $('remainingDisplay').style.borderColor='var(--green)';
+        if(timers[type]!==0){
+            timers[type]=0;
+            beep();
+        }
+    }
+
+    const total=Math.abs(diff);
+    const days=Math.floor(total/86400000);
+    const hours=Math.floor(total/3600000);
+    const minutes=Math.floor(total/60000);
+    const seconds=Math.floor(total/1000);
+    const ms=Math.floor((total%1000)/10);
+
+    const hh=Math.floor(total/3600000)%24;
+    const mm=Math.floor(total/60000)%60;
+    const ss=Math.floor(total/1000)%60;
+
+    $(type+'Out').innerHTML=
+    `${days} gün ${pad(hh)}:${pad(mm)}:${pad(ss)}<small>.${pad(ms)}</small>`;
+
+    if(type==='elapsed'){
+        $('elapsedDays').textContent=days.toLocaleString('tr-TR');
+        $('elapsedHours').textContent=Math.floor(total/3600000).toLocaleString('tr-TR');
+        $('elapsedMinutes').textContent=Math.floor(total/60000).toLocaleString('tr-TR');
+        $('elapsedWeeks').textContent=(total/604800000).toFixed(1);
+        $('elapsedMonths').textContent=(total/2629800000).toFixed(1);
+        $('elapsedYears').textContent=(total/31557600000).toFixed(2);
+    }else{
+        $('remainingDays').textContent=days.toLocaleString('tr-TR');
+        $('remainingHours').textContent=Math.floor(total/3600000).toLocaleString('tr-TR');
+        $('remainingMinutes').textContent=Math.floor(total/60000).toLocaleString('tr-TR');
+    }
+}
+
+setInterval(()=>{
+    if(timers.elapsed) updateTimer('elapsed');
+    if(timers.remaining) updateTimer('remaining');
+},50);
+
+/* SES */
+
+function beep(){
+    try{
+        const ctx=new (window.AudioContext||window.webkitAudioContext)();
+        const osc=ctx.createOscillator();
+        const gain=ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value=880;
+        gain.gain.value=.12;
+        osc.start();
+        osc.stop(ctx.currentTime+.45);
+        osc.onended=()=>ctx.close();
+    }catch(e){}
+}
+
+/* HIZLI HEDEF */
+
+function quickTarget(type,days){
+    const d=new Date();
+    d.setDate(d.getDate()+days);
+    d.setHours(0,0,0,0);
+    setDateButton('remainingDateBtn',d);
+}
+
+function newYear(){
+    const d=new Date(new Date().getFullYear()+1,0,1);
+    setDateButton('remainingDateBtn',d);
+    $('remainingName').value='Yeni Yıl';
+}
+
+/* KRONOMETRE */
+
+function formatDuration(ms){
+    const t=Math.max(0,ms);
+    const h=Math.floor(t/3600000);
+    const m=Math.floor(t/60000)%60;
+    const s=Math.floor(t/1000)%60;
+    const cs=Math.floor(t%1000/10);
+    return `${pad(h)}:${pad(m)}:${pad(s)}.${pad(cs)}`;
+}
+
+function updateChrono(){
+    if(!chronoRunning)return;
+
+    chronoElapsed=Date.now()-chronoStartTime;
+    $('chronoOut').innerHTML=
+    formatDuration(chronoElapsed).replace('.', '<small>.')+'</small>';
+}
+
+function toggleChrono(){
+    if(!chronoRunning){
+        chronoRunning=true;
+        chronoStartTime=Date.now()-chronoElapsed;
+        $('chronoStart').textContent='DURDUR';
+        $('chronoStart').className='btn red';
+        chronoInterval=setInterval(updateChrono,10);
+    }else{
+        chronoRunning=false;
+        clearInterval(chronoInterval);
+        $('chronoStart').textContent='DEVAM ET';
+        $('chronoStart').className='btn green';
+        updateChrono();
+    }
+}
+
+function addLap(){
+    if(!chronoRunning&&chronoElapsed===0)return;
+
+    const total=chronoRunning?Date.now()-chronoStartTime:chronoElapsed;
+    const lapTime=total-lastLapTime;
+
+    lastLapTime=total;
+    laps.push({total,lapTime});
+
+    const list=$('lapList');
+    const row=document.createElement('div');
+    row.className='lap';
+
+    const a=document.createElement('span');
+    const b=document.createElement('span');
+    const c=document.createElement('span');
+
+    a.textContent='Tur '+laps.length;
+    b.textContent=formatDuration(lapTime);
+    c.textContent=formatDuration(total);
+
+    row.append(a,b,c);
+    list.prepend(row);
+
+    const values=laps.map(x=>x.lapTime);
+
+    $('fastLap').textContent=formatDuration(Math.min(...values));
+    $('slowLap').textContent=formatDuration(Math.max(...values));
+    $('avgLap').textContent=formatDuration(
+        values.reduce((a,b)=>a+b,0)/values.length
+    );
+}
+
+function resetChrono(){
+    clearInterval(chronoInterval);
+    chronoRunning=false;
+    chronoElapsed=0;
+    lastLapTime=0;
+    laps=[];
+
+    $('chronoOut').innerHTML='00:00:00<small>.00</small>';
+    $('chronoStart').textContent='BAŞLAT';
+    $('chronoStart').className='btn green';
+    $('lapList').innerHTML='';
+    $('fastLap').textContent='--';
+    $('slowLap').textContent='--';
+    $('avgLap').textContent='--';
+}
+
+/* TARİH FARKI */
+
+function calculateDifference(){
+    const a=parseDate($('diff1Btn').dataset.date);
+    const b=parseDate($('diff2Btn').dataset.date);
+
+    if(!a||!b){
+        $('diffResult').textContent='İki tarih de seçilmelidir.';
+        return;
+    }
+
+    const ms=Math.abs(b-a);
+    const days=Math.floor(ms/86400000);
+    const hours=Math.floor(ms/3600000);
+    const minutes=Math.floor(ms/60000);
+    const seconds=Math.floor(ms/1000);
+
+    const years=Math.floor(days/365.2425);
+    const weeks=Math.floor(days/7);
+
+    $('diffResult').innerHTML=`
+        <strong>Başlangıç:</strong> ${formatDate(a)}<br>
+        <strong>Bitiş:</strong> ${formatDate(b)}<br>
+        <hr>
+        <strong>Takvimsel yaklaşık yıl:</strong> ${years}<br>
+        <strong>Toplam gün:</strong> ${days.toLocaleString('tr-TR')}<br>
+        <strong>Toplam hafta:</strong> ${weeks.toLocaleString('tr-TR')}<br>
+        <strong>Toplam saat:</strong> ${hours.toLocaleString('tr-TR')}<br>
+        <strong>Toplam dakika:</strong> ${minutes.toLocaleString('tr-TR')}<br>
+        <strong>Toplam saniye:</strong> ${seconds.toLocaleString('tr-TR')}<br>
+        <strong>Kesin zaman farkı:</strong> ${formatDuration(ms)}
+    `;
+}
+
+/* YAŞ HESAPLAMA */
+
+function calculateAge(){
+    const birth=parseDate($('birthBtn').dataset.date);
+    const now=new Date();
+
+    if(!birth){
+        $('ageResult').textContent='Doğum tarihini seç.';
+        return;
+    }
+
+    if(birth>now){
+        $('ageResult').textContent='Doğum tarihi gelecekte olamaz.';
+        return;
+    }
+
+    let years=now.getFullYear()-birth.getFullYear();
+    let months=now.getMonth()-birth.getMonth();
+    let days=now.getDate()-birth.getDate();
+
+    if(days<0){
+        months--;
+        const prev=new Date(now.getFullYear(),now.getMonth(),0);
+        days+=prev.getDate();
+    }
+
+    if(months<0){
+        years--;
+        months+=12;
+    }
+
+    const total=Math.floor((now-birth)/86400000);
+    const nextBirthday=new Date(
+        now.getFullYear(),
+        birth.getMonth(),
+        birth.getDate()
+    );
+
+    if(nextBirthday<=now)nextBirthday.setFullYear(now.getFullYear()+1);
+
+    const remaining=Math.ceil((nextBirthday-now)/86400000);
+
+    $('ageResult').innerHTML=`
+        <div style="font-size:30px;color:var(--accent);font-weight:900">
+            ${years} yıl ${months} ay ${days} gün
+        </div>
+        <hr>
+        <strong>Toplam gün:</strong> ${total.toLocaleString('tr-TR')}<br>
+        <strong>Toplam hafta:</strong> ${(total/7).toFixed(1)}<br>
+        <strong>Toplam saat:</strong> ${(total*24).toLocaleString('tr-TR')}<br>
+        <strong>Bir sonraki doğum gününe:</strong> ${remaining} gün
+    `;
+}
+
+/* DÖNÜŞTÜRÜCÜ */
+
+function convertTime(){
+    const value=Number($('convertValue').value);
+    const unit=Number($('convertUnit').value);
+
+    if(!Number.isFinite(value)||value<0){
+        $('convertResult').textContent='Geçerli bir sayı gir.';
+        return;
+    }
+
+    const total=value*unit;
+
+    $('convertResult').innerHTML=`
+        <strong>${value.toLocaleString('tr-TR')} birim karşılığı:</strong><br><br>
+        Saniye: ${(total).toLocaleString('tr-TR')}<br>
+        Dakika: ${(total/60).toLocaleString('tr-TR',{maximumFractionDigits:4})}<br>
+        Saat: ${(total/3600).toLocaleString('tr-TR',{maximumFractionDigits:4})}<br>
+        Gün: ${(total/86400).toLocaleString('tr-TR',{maximumFractionDigits:4})}<br>
+        Hafta: ${(total/604800).toLocaleString('tr-TR',{maximumFractionDigits:4})}<br>
+        Ay (30 gün): ${(total/2592000).toLocaleString('tr-TR',{maximumFractionDigits:4})}<br>
+        Yıl (365 gün): ${(total/31536000).toLocaleString('tr-TR',{maximumFractionDigits:4})}
+    `;
+}
+
+/* KAYIT SİSTEMİ */
+
+function getSaved(){
+    try{return JSON.parse(localStorage.getItem('timeengine_saved')||'[]')}
+    catch(e){return []}
+}
+
+function saveTimer(type){
+    const target=timers[type];
+
+    if(!target){
+        alert('Önce sayacı başlatmalısın.');
+        return;
+    }
+
+    const name=$(type+'Name').value.trim() ||
+    (type==='elapsed'?'Geçen Zaman':'Kalan Zaman');
+
+    const saved=getSaved();
+
+    saved.push({
+        id:Date.now(),
+        type,
+        name,
+        target,
+        created:new Date().toISOString()
+    });
+
+    localStorage.setItem('timeengine_saved',JSON.stringify(saved));
+
+    alert('Sayacın başarıyla kaydedildi.');
+}
+
+function renderSaved(){
+    const list=getSaved();
+    $('savedList').innerHTML='';
+
+    if(!list.length){
+        $('savedList').textContent='Henüz kayıtlı sayacın bulunmuyor.';
+        return;
+    }
+
+    list.forEach(item=>{
+        const row=document.createElement('div');
+        row.className='saved-item';
+
+        const info=document.createElement('div');
+        const title=document.createElement('strong');
+        const detail=document.createElement('small');
+
+        title.textContent=item.name;
+        detail.textContent=
+        (item.type==='elapsed'?'Geçen Zaman':'Kalan Zaman')+
+        ' · '+formatDate(new Date(item.target));
+
+        info.append(title,detail);
+
+        const actions=document.createElement('div');
+        actions.className='saved-actions';
+
+        const open=document.createElement('button');
+        open.textContent='Aç';
+        open.onclick=()=>{
+            openPanel(item.type);
+
+            timers[item.type]=item.target;
+
+            setDateButton(
+                item.type==='elapsed'?'elapsedDateBtn':'remainingDateBtn',
+                new Date(item.target)
+            );
+
+            $(item.type+'Name').value=item.name;
+            updateTimer(item.type);
         };
 
-        const beep = () => {
-            const o = ac.createOscillator(); const g = ac.createGain();
-            o.connect(g); g.connect(ac.destination);
-            o.frequency.value = 880; g.gain.value = 0.1;
-            o.start(); o.stop(ac.currentTime + 0.5);
+        const del=document.createElement('button');
+        del.textContent='Sil';
+        del.onclick=()=>{
+            if(!confirm('Bu kayıt silinsin mi?'))return;
+            localStorage.setItem(
+                'timeengine_saved',
+                JSON.stringify(getSaved().filter(x=>x.id!==item.id))
+            );
+            renderSaved();
         };
 
-        const initMode = (m) => {
-            mode = m;
-            document.getElementById('selection-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('header-text').innerText = m === 'GEÇEN' ? "GEÇEN ZAMAN ANALİZİ" : "KALAN ZAMAN ANALİZİ";
-        };
+        actions.append(open,del);
+        row.append(info,actions);
+        $('savedList').append(row);
+    });
+}
 
-        const startAnalysis = () => {
-            if(itv) clearInterval(itv);
-            document.getElementById('dispObj').classList.remove('finished');
-            itv = setInterval(tick, 10);
-            document.getElementById('state-label').innerText = mode === 'GEÇEN' ? 'GEÇEN SÜRE' : 'KALAN SÜRE';
-        };
+/* BAŞLANGIÇ */
 
-        const tick = () => {
-            const s = new Date(document.getElementById('t1').value).getTime();
-            const e = new Date(document.getElementById('t2').value).getTime();
-            const n = Date.now();
-            let d = mode === 'GEÇEN' ? n - s : e - n;
+initCalendar();
 
-            if (mode === 'KALAN' && d <= 0) {
-                clearInterval(itv);
-                document.getElementById('out').innerHTML = `0g 00:00:00<span class="ms">.00</span>`;
-                document.getElementById('dispObj').classList.add('finished');
-                document.getElementById('state-label').innerText = "SÜRE DOLDU";
-                beep(); return;
-            }
+const now=new Date();
+const yesterday=new Date(now);
+yesterday.setDate(yesterday.getDate()-1);
 
-            const ad = Math.abs(d), ms = Math.floor((ad % 1000) / 10), sec = Math.floor(ad / 1000), min = Math.floor(sec / 60), hr = Math.floor(min / 60), day = Math.floor(hr / 24);
-            document.getElementById('out').innerHTML = `${day}g ${(hr%24).toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${(sec%60).toString().padStart(2,'0')}<span class="ms">.${ms.toString().padStart(2,'0')}</span>`;
-            document.getElementById('w').innerText = (day/7).toFixed(1);
-            document.getElementById('m').innerText = (day/30.44).toFixed(1);
-            document.getElementById('y').innerText = (day/365.25).toFixed(2);
-        };
+setDateButton('elapsedDateBtn',yesterday);
+setDateButton('remainingDateBtn',new Date(now.getTime()+86400000));
+setDateButton('diff1Btn',yesterday);
+setDateButton('diff2Btn',now);
+setDateButton('birthBtn',new Date(2000,0,1));
 
-        const initChrono = () => {
-            document.getElementById('selection-screen').style.display = 'none';
-            document.getElementById('chrono-screen').style.display = 'block';
-        };
+</script>
 
-        const toggleChrono = () => {
-            const b = document.getElementById('cBtn');
-            if(!cRun) {
-                cRun = true; b.innerText = "DURDUR"; b.className = "btn btn-chrono btn-stop";
-                const st = Date.now() - cTime;
-                cItv = setInterval(() => {
-                    cTime = Date.now() - st;
-                    const ms = Math.floor((cTime % 1000) / 10), s = Math.floor(cTime / 1000), m = Math.floor(s / 60), h = Math.floor(m / 60);
-                    document.getElementById('cDisp').innerHTML = `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}<span class="ms">.${ms.toString().padStart(2,'0')}</span>`;
-                }, 10);
-            } else {
-                cRun = false; b.innerText = "DEVAM ET"; b.className = "btn btn-chrono btn-start"; clearInterval(cItv);
-            }
-        };
-
-        const lap = () => {
-            if(cTime === 0) return;
-            const l = document.getElementById('lap-list'), li = document.createElement('li');
-            li.className = 'lap-item'; li.innerHTML = `<span>Tur ${l.children.length + 1}</span> <b>${document.getElementById('cDisp').innerText}</b>`;
-            l.prepend(li);
-        };
-
-        const resetChrono = () => {
-            clearInterval(cItv); cTime = 0; cRun = false;
-            document.getElementById('cDisp').innerHTML = `00:00:00<span class="ms">.00</span>`;
-            document.getElementById('cBtn').innerText = "BAŞLAT"; document.getElementById('cBtn').className = "btn btn-chrono btn-start";
-            document.getElementById('lap-list').innerHTML = "";
-        };
-    </script>
 </body>
 </html>
+```
